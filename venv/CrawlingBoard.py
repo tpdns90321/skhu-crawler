@@ -1,14 +1,7 @@
 import requests
 import re
-import redis
 import json
 from bs4 import BeautifulSoup
-
-#공지인지 아닌지 확인하는 구문
-def isNotNotice(tag):
-    if tag.td.text == "공지":
-        return False
-    return True
 
 #페이지의 request 전체를 가져오는 구문
 def requestPage(pageNum,bsid,bun):
@@ -31,7 +24,7 @@ def extractHref(tag):
 def crawlingPage(i,bsid,bun):
     page = []
     top_list = requestPage(i, bsid, bun).select("#cont > table > tbody > tr")
-    for l in filter(isNotNotice, top_list):
+    for l in filter(lambda tag: True if tag.td.text != "공지" else False, top_list):
         page.append([int(l.td.text), l.a.text, Url + extractHref(l), l.contents[7].text, l.contents[9].text])
     return page
 
@@ -90,9 +83,9 @@ Url = "http://skhu.ac.kr/board/"
 
 
 #게시판 0번의의 글을 가져와서 출력하는 구문
-r=redis.StrictRedis(host='localhost',port=6379, db=0)
-for i in range(1, len(crawlingBoard(10004, 51))):
-    print(r.get(str(i)))
+#r=redis.StrictRedis(host='localhost',port=6379, db=0)
+#for i in range(1, len(crawlingBoard(10004, 51))):
+#    print(r.get(str(i)))
 
 
 #게시판의 i번째 페이지의 글을 가져오는 구문
