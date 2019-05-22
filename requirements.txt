@@ -1,0 +1,10 @@
+beautifulsoup4==4.7.1
+certifi==2019.3.9
+chardet==3.0.4
+gevent==1.4.0
+greenlet==0.4.15
+idna==2.8
+redis==3.2.1
+requests==2.22.0
+soupsieve==1.9.1
+urllib3==1.25.2
