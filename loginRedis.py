@@ -1,4 +1,4 @@
 import redis
 
-r = redis.StrictRedis(host='15.164.32.115', port=6379, db=0,password='ansgur4815!')
+r = redis.StrictRedis(host='127.0.0.1', port=6379, db=0)
 print(str(r.get("1")))
