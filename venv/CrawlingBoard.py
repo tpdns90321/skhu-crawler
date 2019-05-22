@@ -1,12 +1,16 @@
 import requests
 import re
+import redis
+import json
 from bs4 import BeautifulSoup
 
-def is_not_notice(tag):
+#공지인지 아닌지 확인하는 구문
+def isNotNotice(tag):
     if tag.td.text == "공지":
         return False
     return True
 
+#페이지의 request 전체를 가져오는 구문
 def requestPage(pageNum,bsid,bun):
     req=requests.get('http://skhu.ac.kr/board/boardlist.aspx?curpage={}&bsid={}&searchBun={}'.format(pageNum, bsid, bun))
     source = req.text
@@ -27,12 +31,9 @@ def extractHref(tag):
 def crawlingPage(i,bsid,bun):
     page = []
     top_list = requestPage(i, bsid, bun).select("#cont > table > tbody > tr")
-    for l in filter(is_not_notice, top_list):
+    for l in filter(isNotNotice, top_list):
         page.append([int(l.td.text), l.a.text, Url + extractHref(l), l.contents[7].text, l.contents[9].text])
     return page
-
-#성공회대학교 URL
-Url = "http://skhu.ac.kr/board/"
 
 # 공지를 포함하지 않은 1~마지막 페이지까지의 글 목록
 def crawlingBoard(bsid, bun):
@@ -41,5 +42,68 @@ def crawlingBoard(bsid, bun):
         board.extend(crawlingPage(i,bsid,bun))
     return board
 
-# print(crawlingBoard(10004,51))
-print(crawlingPage(1,10004,51))
+#성공회대학교 URL
+Url = "http://skhu.ac.kr/board/"
+
+# # 레디스 디비를 초기화시켜주는 구문
+# r=redis.StrictRedis(host='localhost',port=6379)
+# r.flushall()
+#
+# #리스트 선언
+# board=[]
+#
+# #크롤링 한 데이터를 0번 보드에 맞춰서 레디스에 넣는 작업
+# r = redis.StrictRedis(host='localhost', port=6379, db=0)
+# board = crawlingBoard(10004,51)
+# for i in range(0,len(board)):
+#     r.set(board[i][0],json.dumps(board[i]))
+#
+# #크롤링 한 데이터를 1번 보드에 맞춰서 레디스에 넣는 작업
+# r = redis.StrictRedis(host='localhost', port=6379, db=1)
+# board = crawlingBoard(10005, 53)
+# for i in range(0,len(board)):
+#     r.set(board[i][0], json.dumps(board[i]))
+#
+# #크롤링 한 데이터를 2번 보드에 맞춰서 레디스에 넣는 작업
+# r = redis.StrictRedis(host='localhost', port=6379, db=2)
+# board = crawlingBoard(10038, 39)
+# for i in range(0,len(board)):
+#     r.set(board[i][0], json.dumps(board[i]))
+#
+# #크롤링 한 데이터를 3번 보드에 맞춰서 레디스에 넣는 작업
+# r = redis.StrictRedis(host='localhost', port=6379, db=3)
+# board = crawlingBoard(10006, 75)
+# for i in range(0,len(board)):
+#     r.set(board[i][0], json.dumps(board[i]))
+#
+# #크롤링 한 데이터를 4번 보드에 맞춰서 레디스에 넣는 작업
+# r = redis.StrictRedis(host='localhost', port=6379, db=4)
+# board = crawlingBoard(10007, 0)
+# for i in range(0,len(board)):
+#     r.set(board[i][0], json.dumps(board[i]))
+#
+# #크롤링 한 데이터를 5번 보드에 맞춰서 레디스에 넣는 작업
+# r = redis.StrictRedis(host='localhost', port=6379, db=5)
+# board = crawlingBoard(10008, 0)
+# for i in range(0,len(board)):
+#     r.set(board[i][0], json.dumps(board[i]))
+
+
+#게시판 0번의의 글을 가져와서 출력하는 구문
+r=redis.StrictRedis(host='localhost',port=6379, db=0)
+for i in range(1, len(crawlingBoard(10004, 51))):
+    print(r.get(str(i)))
+
+
+#게시판의 i번째 페이지의 글을 가져오는 구문
+# print(crawlingPage(1,10004,51))
+
+#모든 데이터베이스의 모든 키값들을 없애는 명령어
+# FLUSHALL
+
+#현재 데이터베이스의 모든 키값들을 없애는 명령어
+# FLUSHDB
+
+# r.set()
+
+
