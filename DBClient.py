@@ -16,5 +16,7 @@ class DBClient(Redis):
         Redis.set(self, key, json.dumps(value, ensure_ascii=False))
 
     # key 값은 그대로 놓고 결과값만 json에서 python 구조체로 변환해서 볼러온다.
-    def get(self, key):
-        return json.loads(Redis.get(self, key).decode("utf-8"))
+    # python 자료형인지 string으로 변환할지 결정한다.(기본값 python 자료형)
+    def get(self, key, trans=True):
+        res = Redis.get(self, key).decode("utf-8")
+        return json.loads(res) if trans else res

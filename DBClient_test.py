@@ -13,5 +13,5 @@ if __name__ == "__main__":
     keys.sort()
     print(keys[0], keys[-1])
     print(db.get(1))
-    print(db.get(901))
+    print(db.get(901, False))
 

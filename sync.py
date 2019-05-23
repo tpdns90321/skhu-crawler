@@ -41,6 +41,7 @@ class Sync(DBClient):
                 break
             # 글 번호
             article_num = article[0]
+            # 키를 참조해 값과 함께 dictionary로 변환
             article_res = {}
             for k,v in zip(ARTICLE_ATTR, article):
                 article_res[k] = v
