@@ -3,7 +3,6 @@ patch_all()
 import gevent
 from gevent.pool import Pool,Group
 from gevent.queue import Queue
-import json
 import redis
 
 from CrawlingBoard import crawlingPage,requestPage,lastPage
@@ -41,7 +40,7 @@ class Sync(DBClient):
             # 글 번호
             article_num = article[0]
             # 글 번호를 제외한 글 자료를 저장한다.
-            article_data = json.dumps(article[1:5]).encode("utf-8")
+            article_data = article[1:5]
             # DB에 저장
             self.set(article_num, article_data)
 
