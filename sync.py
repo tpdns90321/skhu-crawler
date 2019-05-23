@@ -6,7 +6,7 @@ from gevent.queue import Queue
 import redis
 
 from CrawlingBoard import crawlingPage,requestPage,lastPage
-from dbclient import DBClient
+from DBClient import DBClient
 
 # 읽기,쓰기를 각 rw_workers개수로 크롤링 후 레디스 저장을 동시처리하는 클래스
 class Sync(DBClient):

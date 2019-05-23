@@ -1,5 +1,5 @@
-from dbclient import DBClient
 from settings import generateDefaultSetting
+from DBClient import DBClient
 from BoardCode import HAKSA
 
 def dbLogin():
