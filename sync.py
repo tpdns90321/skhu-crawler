@@ -39,10 +39,8 @@ class Sync(DBClient):
                 break
             # 글 번호
             article_num = article[0]
-            # 글 번호를 제외한 글 자료를 저장한다.
-            article_data = article[1:5]
             # DB에 저장
-            self.set(article_num, article_data)
+            self.set(article_num, article)
 
     # 처음에 DB가 비어있을 떄 모든 글들을 불러오는 함수이다.
     def firstRun(self):
