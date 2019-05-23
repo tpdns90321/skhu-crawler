@@ -1,5 +1,8 @@
 from os import getenv
 
+# 기본 설정값을 생성한다.
+# 그리고 환경변수에 있으면 불러온다.
+# 출력값은 dictionary 이다.
 def generateDefaultSetting():
     p_settings = {
         "redis" : getenv("redis"),
@@ -11,7 +14,9 @@ def generateDefaultSetting():
 
     res = {}
     for k,v in p_settings.items():
+        # 환경변수에서 있나 없나
         if v == None:
+            # 없으면 기본값 집어넣기
             if k == "redis":
                 res[k] = "127.0.0.1"
             elif k == "redis-port":
@@ -23,6 +28,7 @@ def generateDefaultSetting():
             else:
                 res[k] = None
         else:
+            # 환경변수에서 int로 처리해야 하는 것 있으면 처리한다.
             if k == "redis-port" or k == "rw-workers":
                 res[k] = int(v)
             else:
