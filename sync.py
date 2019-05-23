@@ -8,6 +8,8 @@ import redis
 from CrawlingBoard import crawlingPage,requestPage,lastPage
 from DBClient import DBClient
 
+ARTICLE_ATTR = ["num", "name", "url", "writer", "date"]
+
 # 읽기,쓰기를 각 rw_workers개수로 크롤링 후 레디스 저장을 동시처리하는 클래스
 class Sync(DBClient):
     def __init__(self, Settings, BoardCode):
@@ -39,8 +41,11 @@ class Sync(DBClient):
                 break
             # 글 번호
             article_num = article[0]
+            article_res = {}
+            for k,v in zip(ARTICLE_ATTR, article):
+                article_res[k] = v
             # DB에 저장
-            self.set(article_num, article)
+            self.set(article_num, article_res)
 
     # 처음에 DB가 비어있을 떄 모든 글들을 불러오는 함수이다.
     def firstRun(self):
