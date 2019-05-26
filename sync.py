@@ -48,9 +48,9 @@ class Sync(DBClient):
                 return
 
         # 다음 글을 읽으려 간다.
-        readPool.spawn(self._updateParsing,
-                       last,
-                       pageNum+1)
+        self.readPool.spawn(self._updateParsing,
+                            last,
+                            pageNum+1)
 
     def _storeArticle(self, article):
         # 글 번호
