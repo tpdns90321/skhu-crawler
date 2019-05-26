@@ -20,3 +20,11 @@ class DBClient(Redis):
     def get(self, key, trans=True):
         res = Redis.get(self, key).decode("utf-8")
         return json.loads(res) if trans else res
+
+    # 키의 타입은 숫자로 이뤄져 있어 간편함을 위해 int로 변환해주고
+    # 필요시 정렬한다.
+    def keys(self, sort=False):
+        res = list(map(int, Redis.keys(self)))
+        if sort:
+            res.sort()
+        return res

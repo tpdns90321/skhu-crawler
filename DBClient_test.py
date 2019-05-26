@@ -8,10 +8,9 @@ def dbLogin():
 
 if __name__ == "__main__":
     db = dbLogin()
-    keys = db.keys()
-    keys = list(map(int, keys))
-    keys.sort()
+    keys = db.keys(True)
     print(keys[0], keys[-1])
     print(db.get(1))
-    print(db.get(901, False))
+    print(db.get(keys[-1], False))
+    print(keys[len(keys)-3:len(keys)])
 
