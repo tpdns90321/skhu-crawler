@@ -32,6 +32,36 @@ class Sync(DBClient):
         for article in crawlingPage(pageNum, self.bsid, self.bun):
             self.ch.put(article)
 
+    # 종료신호를 전달한다.
+    def _endSignal(self):
+        for _ in range(self.workers):
+            self.ch.put(None)
+
+    def _updateParsing(self, last, pageNum):
+        # 글을 추출한다.
+        for article in crawlingPage(pageNum, self.bsid, self.bun):
+            # 글번호가 최근글보다 크면 저장하고 아니면 종료한다.
+            if article[0] > last:
+                self.ch.put(article)
+            else:
+                self._endSignal()
+                return
+
+        # 다음 글을 읽으려 간다.
+        readPool.spawn(self._updateParsing,
+                       last,
+                       pageNum+1)
+
+    def _storeArticle(self, article):
+        # 글 번호
+        article_num = article[0]
+        # 키를 참조해 값과 함께 dictionary로 변환
+        article_res = {}
+        for k,v in zip(ARTICLE_ATTR, article):
+            article_res[k] = v
+        # DB에 저장
+        self.set(article_num, article_res)
+
     # Queue에서 글을 받아서 redis에 저장한다.
     def _Store(self):
         while True:
@@ -39,14 +69,11 @@ class Sync(DBClient):
             # 종료 신호가 오면 종료한다.
             if article is None:
                 break
-            # 글 번호
-            article_num = article[0]
-            # 키를 참조해 값과 함께 dictionary로 변환
-            article_res = {}
-            for k,v in zip(ARTICLE_ATTR, article):
-                article_res[k] = v
-            # DB에 저장
-            self.set(article_num, article_res)
+            self._storeArticle(article)
+
+    # workers개수로 쓰는 함수를 시작한다.
+    def writePoolSpawn(self):
+        [self.writePool.add(gevent.spawn(self._Store)) for _ in range(self.workers)]
 
     # 처음에 DB가 비어있을 떄 모든 글들을 불러오는 함수이다.
     def firstRun(self):
@@ -54,20 +81,25 @@ class Sync(DBClient):
         self.readPool.map(self._Parsing,
                           range(1,lastPage(requestPage(1,self.bsid,self.bun))+1))
         # workers개수로 쓰는 함수를 시작한다.
-        for _ in range(self.workers):
-            self.writePool.add(gevent.spawn(self._Store))
+        self.writePoolSpawn()
         # readPool이 끝나길 기다린다.
         self.readPool.join()
         # writePool 개수대로 종료신호를 전달한다.
-        for _ in range(self.workers):
-            self.ch.put(None)
+        self._endSignal()
         # writePool이 끝나기 기달린다.
         self.writePool.join()
 
-    # DB가 비어있으면 firstRun을 실행하고 아니면 갱신만 하면 된다.
-    # 미구현 상태
+    # DB가 비어있으면 firstRun을 실행하고 아니면 갱신을 한다.
     def Run(self):
-        if self.keys().count() == 0:
+        count = len(self.keys())
+        # db가 비어있는지 확인한다.
+        if count == 0:
             self.firstRun()
             return
-        raise NotImplementedError
+
+        # 새 글을 찾는 함수를 실행한다.
+        self.readPool.spawn(self._updateParsing, count, 1)
+        # workers개수로 쓰는 함수를 시작한다.
+        self.writePoolSpawn()
+        # 끝나기 기달린다.
+        self.writePool.join()
