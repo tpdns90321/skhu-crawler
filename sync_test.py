@@ -17,4 +17,8 @@ if __name__ == "__main__":
     print(len(sync.keys()))
     sync.Run()
     print(len(sync.keys()))
+    [sync.delete(i) for i in range(keys-30,keys+1)]
+    print(len(sync.keys()))
+    sync.Run()
+    print(len(sync.keys()))
 
