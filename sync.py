@@ -14,7 +14,7 @@ ARTICLE_ATTR = ["num", "name", "url", "writer", "date"]
 class Sync(DBClient):
     def __init__(self, Settings, BoardCode):
         # 설정값을 통해 초기화를 한다.
-        self.workers = Settings["rw-workers"]
+        self.workers = Settings["RW_WORKERS"]
         # 읽기는 Pool로 처리한다. 몇 개가 들어오는지 예측이 불가하기 때문이다.
         self.readPool = Pool(self.workers)
         # 쓰기는 정해진 개수로 처리하므로 Group으로 몪는다.

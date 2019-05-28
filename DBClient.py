@@ -6,9 +6,9 @@ import json
 class DBClient(Redis):
     def __init__(self, Settings, BoardCode):
         Redis.__init__(self,
-                       host=Settings["redis"],
-                       port=Settings["redis-port"],
-                       password=Settings["redis-password"],
+                       host=Settings["REDIS"],
+                       port=Settings["REDIS_PORT"],
+                       password=Settings["REDIS_PASSWORD"],
                        db=BoardCode["dbid"])
 
     # key 값은 그대로 놓고 value만 json으로 변환해서 저장한다.
