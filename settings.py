@@ -9,7 +9,7 @@ def generateDefaultSetting():
         "REDIS_PORT" : getenv("REDIS_port"),
         "REDIS_PASSWORD" : getenv("REDIS_PASSWORD"),
         "RW_WORKERS" : getenv("RW_WORKERS"),
-        "MODE" : getenv("CRAWLER_MODE")
+        "MODE" : getenv("MODE")
     }
 
     res = {}
