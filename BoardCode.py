@@ -6,3 +6,7 @@ JANGHAK = {"dbid": 4, "bsid": 10006, "bun": 75}
 ILBAN = {"dbid": 5, "bsid": 10007, "bun": 0}
 HANGSA = {"dbid": 6, "bsid": 10008, "bun": 0}
 
+CODES = {"HAKSA": HAKSA, "SU_UP": SU_UP,
+        "HAKJUM": HAKJUM, "JANGHAK": JANGHAK,
+        "ILBAN": ILBAN, "HANGSA": HANGSA}
+
