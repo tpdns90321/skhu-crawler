@@ -42,6 +42,9 @@ if __name__ == "__main__":
         http.serve_forever()
     elif setting["MODE"] == "crawling":
         SYNC = init_class(setting, Sync)
-        th = [gevent.spawn(s.Run) for s in SYNC.values()]
+        th = []
+        for k,s in SYNC.items():
+            print("{} crawling start".format(k))
+            th.append(gevent.spawn(s.Run))
         gevent.joinall(th)
 
