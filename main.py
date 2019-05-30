@@ -4,7 +4,7 @@ from flask import Flask,request
 
 from settings import generateDefaultSetting
 from BoardCode import CODES
-from api import API
+from api import Api
 from sync import Sync
 
 APIS = {}
@@ -36,7 +36,7 @@ def init_class(setting, target):
 if __name__ == "__main__":
     setting = generateDefaultSetting()
     if setting["MODE"] == "api":
-        APIS = init_class(setting, API)
+        APIS = init_class(setting, Api)
         http = WSGIServer(("", 3000), app)
         print("api server start")
         http.serve_forever()

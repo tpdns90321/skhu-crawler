@@ -2,7 +2,7 @@ import json
 
 from DBClient import DBClient
 
-class API(DBClient):
+class Api(DBClient):
     def __INIT__(self, Setting, BoardCode):
         DBClient.__INIT__(self, Setting, BoardCode)
 
